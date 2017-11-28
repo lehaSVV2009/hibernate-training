@@ -1,31 +1,9 @@
-# Simple demo app with Hibernate only! (No Spring here).
+# Spring Data / Hibernate training in Kotlin
 
-Written in Kotlin
+Consists of the following lessons:
 
-## Getting Started
+1. One entity app with hibernate only
 
-1. Install Java and MySQL
+(Application is in progress)
 
-
-```
-brew install mysql
-brew cask install java
-```
-
-2. Create database
-
-```
-mysql -u root -p password
-
-CREATE DATABASE hibernate_lesson
-```
-
-
-3. Change database configuration
-```
-# Edit in hibernate.cfg.xml
-<property name="connection.password">password</property>
-
-```
-
-4. Run app
+Every lesson is fully working folder, so you can just simply download a single folder and work with it.
