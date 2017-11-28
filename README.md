@@ -1,9 +1,8 @@
-# spring-data-training
-Spring Data / Hibernate training in Kotlin
+# Spring Data / Hibernate training in Kotlin
 
-Consists of the following lesson folders:
+Consists of the following lessons:
 
-* One entity app with hibernate only
+1. One entity app with hibernate only
 
 (Application is in progress)
 
