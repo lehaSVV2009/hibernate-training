@@ -1,0 +1,32 @@
+group 'kadet.hibernate.training'
+version '1.0-SNAPSHOT'
+
+buildscript {
+  ext.kotlin_version = '1.1.51'
+
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.hibernate:hibernate-core:5.2.12.Final'
+  compile 'mysql:mysql-connector-java:5.1.6'
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+}
+
+compileKotlin {
+  kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+  kotlinOptions.jvmTarget = "1.8"
+}

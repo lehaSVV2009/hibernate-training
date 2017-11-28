@@ -1,0 +1,3 @@
+include '1-hibernate-only'
+
+rootProject.name = 'spring-data-training'
