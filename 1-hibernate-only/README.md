@@ -1,7 +1,8 @@
-
-# Simple demo app with Hibernate only! (No Spring here).
+# Simple demo app with Hibernate only! One entity. No Spring.
 
 Written in Kotlin
+
+Have fun :smile:
 
 ## Getting Started
 

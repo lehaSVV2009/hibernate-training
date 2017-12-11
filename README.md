@@ -2,8 +2,10 @@
 
 Consists of the following lessons:
 
-1. One entity app with hibernate only
+* One entity app with hibernate only (working application)
+* Hibernate mapping annotations (only README)
+* Hibernate additional annotations (only README)
 
 (Application is in progress)
 
-Every lesson is fully working folder, so you can just simply download a single folder and work with it.
+**Every lesson consists of either working application with comments in code or with descriptive README.md file with code examples**
