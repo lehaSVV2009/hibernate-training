@@ -1,4 +1,4 @@
-# Description of filters, naming strategies and embedded types.
+# Description of filters, naming strategies, embedded types and transient.
 
 ## @Where
 
@@ -49,9 +49,31 @@ activeActorsFilter.setParameter("activeValue", true);
 
 Allows to define a name to resolve tables/columns names by any function
 
-`ImplicitNamingStrategy` - applied if column name is implicit
+There are 2 default strategies
+
+`ImplicitNamingStrategy` - applied if column name is not added
+
+```
+class Actor {
+
+  // Hibernate uses property name for column name ('firstName' column)
+  String firstName;
+
+}
+```
 
 `PhysicalNamingStrategy` - applied if column name is not implicit
+
+```
+class Actor {
+
+  // You can add some customizations to name
+  @Column(name = "my_project_first_name")
+  String firstName;
+
+}
+```
+
 
 The following code allows not to add @Column with underscore name everywhere:
 
@@ -137,4 +159,20 @@ class Actor {
   }
 }
 
+```
+
+## Transient
+
+If you want column not to be mapped as database column, use `@Transient` annotation
+
+```
+class Actor {
+
+  // Mapped to database column
+  String firstName;
+  
+  // Not mapped to database column
+  @Transient
+  String notInDatabase;
+}
 ```
