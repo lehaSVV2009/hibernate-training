@@ -1,5 +1,66 @@
 # Description of entity mapping annotations.
 
+## Type
+
+Hibernate has a lot of types which makes mapping between database column type and java type:
+
+### Primitive Types
+
+| Mapping type | Java type                    | ANSI SQL Type        |
+|--------------|------------------------------|----------------------|
+| integer      | int or java.lang.Integer     | INTEGER              |
+| long         | long or java.lang.Long       | BIGINT               |
+| short        | short or java.lang.Short     | SMALLINT             |
+| float        | float or java.lang.Float     | FLOAT                |
+| double       | double or java.lang.Double   | DOUBLE               |
+| big_decimal  | java.math.BigDecimal         | NUMERIC              |
+| character    | java.lang.String             | CHAR(1)              |
+| string       | java.lang.String             | VARCHAR              |
+| byte         | byte or java.lang.Byte       | TINYINT              |
+| boolean      | boolean or java.lang.Boolean | BIT                  |
+| yes/no       | boolean or java.lang.Boolean | CHAR(1) ('Y' or 'N') |
+| true/false   | boolean or java.lang.Boolean | CHAR(1) ('T' or 'F') |
+
+### Date and Time Types
+
+| Mapping type  | Java type                            | ANSI SQL Type |
+|---------------|--------------------------------------|---------------|
+| date          | java.util.Date or java.sql.Date      | DATE          |
+| time          | java.util.Date or java.sql.Time      | TIME          |
+| timestamp     | java.util.Date or java.sql.Timestamp | TIMESTAMP     |
+| calendar      | java.util.Calendar                   | TIMESTAMP     |
+| calendar_date | java.util.Calendar                   | DATE          |
+
+### Binary and Large Object Types
+
+| Mapping type | Java type                                           | ANSI SQL Type       |
+|--------------|-----------------------------------------------------|---------------------|
+| binary       | byte[]                                              | VARBINARY (or BLOB) |
+| text         | java.lang.String                                    | CLOB                |
+| serializable | any Java class that implements java.io.Serializable | VARBINARY (or BLOB) |
+| clob         | java.sql.Clob                                       | CLOB                |
+| blob         | java.sql.Blob                                       | BLOB                |
+
+### JDK-related Types
+
+| Mapping type | Java type          | ANSI SQL Type |
+|--------------|--------------------|---------------|
+| class        | java.lang.Class    | VARCHAR       |
+| locale       | java.util.Locale   | VARCHAR       |
+| timezone     | java.util.TimeZone | VARCHAR       |
+| currency     | java.util.Currency | VARCHAR       |
+
+Hibernate also contains own types, e.g. 'string', 'java.lang.String' or 'org.hibernate.type.StringNVarcharType'
+
+```
+class Actor {
+
+  @Type(type = "string")
+  String name;
+
+}
+```
+
 ## Main
 
 ```
