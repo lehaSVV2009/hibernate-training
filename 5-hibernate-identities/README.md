@@ -1,4 +1,4 @@
-# JPA annotations
+# Hibernate identities and logging
 
 ## Identity of entities
 

@@ -1,4 +1,4 @@
-# Associations
+# Hibernate Associations
 
 ## @ManyToOne
 
@@ -67,11 +67,13 @@ phone1 = entityManager.find(Person.class, phone1.getId());
 phone1.setPerson(null); // insert into where person_id=NULL
 ```
 
-Default TYPE - 
+Default TYPE: `EAGER`
 
 ```
 FetchType fetch() default EAGER
 ```
+
+It executes smth like
 
 ```
 select phone left outer join person
@@ -109,7 +111,11 @@ The line below will call `select person where id = phone.id`
 phone1.getPerson();
 ```
 
-## @OneToMany
+## Unidirectional @OneToMany
+
+Put info to parent entity only.
+
+**Not very effective.**
 
 ```
 class Person {
@@ -162,7 +168,8 @@ It is important to detect who should handle mapping (`mappedBy`).
 ```
 class Person {
  
-  @OneToMany(mappedBy = "phones")
+  // Delegates mapping to person
+  @OneToMany(mappedBy = "person")
   @JoinColumn(name = "person_id")
   List<Phone> phones = new ArrayList<>();
 
@@ -187,3 +194,182 @@ class Phone {
   Person person
 }
 ```
+
+It is important to add the following methods for bidirectional `OneToMany`
+
+```
+public void addPhone(Phone phone) {
+  getPhones.add(phone);
+  phone.setPerson(this);
+}
+
+public void removePhone(Phone phone) {
+  getPhones.remove(phone);
+  phone.setPerson(this);
+}
+
+```
+
+If it looks strange for you, so you can use hibernate byte code enhancer
+
+## @OneToOne
+
+It also might be *unidirectional* and *bidirectional*
+
+```
+class Person {
+  @Id
+  @GeneratedValue
+  Long id;
+
+  @OneToOne(mappedBy = "person")
+  PersonDetails personDetails;
+
+  public void addPersonDetails(PersonDetails personDetails) {
+    this.personDetails = personDetails;
+    this.personDetails.setPerson(this);
+  }
+}
+```
+
+
+```
+class PersonDetails {
+  @Id
+  Long id;
+  
+  String detail;
+  
+  @OneToOne(fetch = LAZY)
+  @JoinColumn(name = "id") // will join person details with person by id
+  @MapsId // Used for shared primary key. It means that id is the same as id of Person
+  Person person;
+}
+```
+
+```
+Person person = new Person();
+person.setFirstName("fn");
+
+PersonDetails personDetails = new PersonDetails();
+personDetails.setDetails("detail1");
+person.addPersonDetails(personDetails);
+
+entityManager.persist(person);
+entityManager.persist(personDetails);
+
+entityManager.flush();
+entityManager.clear();
+
+// Fetch person details without person
+PersonDetails details = entityManager.find(PersonDetails.class, 17L);
+// Fetch person
+details.getPerson();
+
+```
+
+Child entity often more effective for `mappedBy`.
+
+***p.s. DDL auto is a risky thing in OneToOne mappings. It will create new columns..***
+
+One more note - parent object fetches child even if fetch type is LAZY. (Just not be null).
+
+## @ManyToMany
+
+Lazy by default
+
+```
+class Person {
+  @Id
+  @GeneratedValue
+  Long id;
+
+  @ManyToMany
+  @JoinTable(
+    name = "person_bank_account",
+    joinColumns = @JoinColumn(name = "person_id"),
+    inverseJoinColumn = @JoinColumn(name = "bank_account_id")
+  )
+  Set<BankAccount> bankAccounts = new HashSet<>();
+
+  public void addBankAccount(BankAccount account) {
+    bankAccounts.add(account);
+    account.getOwners().add(this);
+  }
+
+  public void removeBankAccount(BankAccount bankAccount) {
+    bankAccounts.remove(bankAccount);
+    bankAccount.getOwners().remove(this);
+  }
+}
+```
+
+```
+class BankAccount {
+  @Id
+  @GeneratedValue
+  Long id;
+
+  String num;
+  
+  BigDecimal amount;
+
+  @ManyToMany(mappedBy = "bankAccounts")
+  Set<Person> owners = new HashSet<>();
+}
+```
+
+```
+// Delete old rows
+entityManager.createQuery("delete from Point").executeUpdate();
+entityManager.createQuery("delete from BankAccount").executeUpdate();
+
+Person person1 = new Person();
+person1.setFirstName("fn1");
+
+Person person2 = new Person();
+person2.setFirstName("fn1");
+
+BankAccount account1 = new BankAccount();
+account1.setNum("1111");
+account1.setAmount(new BigDecimal(12.12));
+
+person1.addBankAccount(bankAccount1);
+person2.addBankAccount(bankAccount1);
+
+BankAccount account2 = new BankAccount();
+account2.setNum("1111");
+account2.setAmount(new BigDecimal(12.12));
+
+person2.addBankAccount(bankAccount2);
+
+entityManager.persist(person1);
+entityManager.persist(person2);
+
+entityManager.persist(bankAccount1);
+entityManager.persist(bankAccount2);
+
+entityManager.flush();
+entityManager.clear();
+
+person1 = entityManager.find(Person.class, person1.getId());
+bankAccount1 = entityManager.find(BankAccount.class, bankAccount1.getId());
+
+person1.removeBankAccount(bankAccount1);
+```
+
+***p.s. DO NOT USE float or double for money! Use BidDecimal or 2 Integers***
+
+It is recommended to initialize collections and use sets (especially in ManyToMany).
+
+```
+Set<Person> owners = new HashSet<>();
+```
+
+Hibernate has his own list implementations. It helps for scenarios like sorting. (`@Order`)
+
+### Can I call persist for one entity only in many-to-many?
+
+### Is it possible to create PersonBankAccount entity in many-to-many? Is it a good practice?
+
+### What is a good practice to choose entity that should have `mappedBy` field and entity that should implement mapping
