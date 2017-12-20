@@ -368,8 +368,11 @@ Set<Person> owners = new HashSet<>();
 
 Hibernate has his own list implementations. It helps for scenarios like sorting. (`@Order`)
 
+
 ### Can I call persist for one entity only in many-to-many?
 
+
 ### Is it possible to create PersonBankAccount entity in many-to-many? Is it a good practice?
+
 
 ### What is a good practice to choose entity that should have `mappedBy` field and entity that should implement mapping
