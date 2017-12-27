@@ -16,7 +16,7 @@ class Phone {
   String num;
 
   @ManyToOne
-  @JointColumn(name = "person_id")
+  @JoinColumn(name = "person_id")
   Person person
 }
 ```
@@ -94,7 +94,7 @@ class Phone {
   String num;
   
   @ManyToOne(fetch = LAZY)
-  @JointColumn(name = "person_id")
+  @JoinColumn(name = "person_id")
   Person person
 }
 ```
@@ -190,7 +190,7 @@ class Phone {
   String num;
 
   @ManyToOne(fetch = LAZY)
-  @JointColumn(name = "person_id")
+  @JoinColumn(name = "person_id")
   Person person
 }
 ```
@@ -362,14 +362,65 @@ person1.removeBankAccount(bankAccount1);
 
 It is recommended to initialize collections and use sets (especially in ManyToMany).
 
+Cause for example, remove in List 
+
 ```
 Set<Person> owners = new HashSet<>();
 ```
 
 Hibernate has his own list implementations. It helps for scenarios like sorting. (`@Order`)
 
+
+## @ManyToMany link entity
+
+class Person {
+
+  @OneToMany
+  List<PersonBankAccount> personBankAccounts
+}
+
+class BankAccount {
+
+  @OneToMany
+  List<PersonBankAccount> personBankAccounts
+}
+
+class PersonBankAccount {
+
+  @Id
+  @ManyToOne
+  @JoinColumn(name = "person_id")
+  Person person
+
+  @Id
+  @ManyToOne
+  @JoinColumn(name = "bank_account_id")
+  BankAccount bankAccount
+}
+
+Advantages:
+
+List are effectively working with link entity approach
+Might be more effectively for importing
+Sometimes link table can contain additional fields
+
+Disadvantages:
+
+Java heap consumption
+
+1000 people + 1000 bank accounts VS 1000 people + 1000 bank accounts + 1000*1000 links
+
+## FAQ
+
 ### Can I call persist for one entity only in many-to-many?
+
+Yes. See future chapters. (Probably 8th or 9th).
 
 ### Is it possible to create PersonBankAccount entity in many-to-many? Is it a good practice?
 
+Yes. See [@ManyToMany link entity](#manytomany-link-entity).
+
 ### What is a good practice to choose entity that should have `mappedBy` field and entity that should implement mapping
+
+For `one-to-one` or `many-to-one` or `one-to-many` child entity is more effective to work with queries, so use `mappedBy` in parent entity.
+For `many-to-many` it doesn't matter.
