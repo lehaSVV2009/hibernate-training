@@ -245,5 +245,5 @@ class Truck extends Vehicle {
 
 ### Which type of inheritance should I use?
 
-Think a lot if you really need inheritance. (Sometime inheritance is a child of evil).
+Think a lot if you really need inheritance. (Sometimes inheritance is a child of evil).
 But if you need it, use `Join Tables`.

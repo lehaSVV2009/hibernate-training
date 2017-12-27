@@ -373,6 +373,17 @@ Hibernate has his own list implementations. It helps for scenarios like sorting.
 
 ## @ManyToMany link entity
 
+Advantages:
+
+* List are effectively working with link entity approach
+* Might be more effectively and so risky for data insert
+* Sometimes link table can contain additional fields
+
+Disadvantages:
+
+* Java heap consumption. 1000 people + 1000 bank accounts VS 1000 people + 1000 bank accounts + n * 1000 links
+
+```
 class Person {
 
   @OneToMany
@@ -397,18 +408,7 @@ class PersonBankAccount {
   @JoinColumn(name = "bank_account_id")
   BankAccount bankAccount
 }
-
-Advantages:
-
-List are effectively working with link entity approach
-Might be more effectively for importing
-Sometimes link table can contain additional fields
-
-Disadvantages:
-
-Java heap consumption
-
-1000 people + 1000 bank accounts VS 1000 people + 1000 bank accounts + 1000*1000 links
+```
 
 ## FAQ
 
