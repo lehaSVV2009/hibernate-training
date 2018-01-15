@@ -275,13 +275,84 @@ update amount=80 version = 2 where version=1 and id=15
 // will through exception
 ```
 
+Example: 
 
 ```
 class BankAccount {
+  Long id;
+
   @Version
   Integer version
 }
+
+Thread thread1 = new Thread(() -> {
+  doInTransaction((entityManager) -> {
+    BankAccount bankAccount = entityManager.find(BankAccount.class, 10L);
+    bankAccount.setAmount(100);
+   
+    sleep(2000L);
+  }
+});
+
+thread1.start();
+
+Thread thread2 = new Thread(() -> {
+  doInTransaction((entityManager) -> {
+    BankAccount bankAccount = entityManager.find(BankAccount.class, 10L);
+    bankAccount.setAmount(90);
+  }
+});
+
+thread2.start();
+
+// throws OptimisticLockException
 ```
+
+*It's a good practice to add version property for most classes*
 
 ### Pessimistic locking
 Before write - lock this row, and no one can change it.
+
+Other transactions will fail/wait/wait with timeout/etc.
+
+Obtain Lock
+
+* `Session.get()` specifying a `LockMode`
+* `Query.setLockMode()`
+
+### Lock Modes
+
+* UPGRADE (PESSIMISTIC_WRITE) - Pessimistic lock. Performs `SELECT FOR UPDATE`.
+* UPGRADE_NOWAIT - Fail if the row is locked. Performs `SELECT FOR UPDATE NOWAIT`.
+* UPGRADE_SKIPLOCKED - For update it will skip locked rows when update multiple. Performs `SELECT FOR UPDATE SKIP LOCKED`.
+
+It is possible to have `DEAD LOCK` issues with pessimistic locks.
+*It's not a good practice to use pessimistic locking for big apps*
+
+*Do not use thread handling in Java, it's better to handle it in DB*
+
+```
+Thread thread1 = new Thread(() -> {
+  doInTransaction((entityManager) -> {
+    BankAccount bankAccount = entityManager.find(BankAccount.class, 10L, LockModeType.PESSIMISTIC_WRITE);
+    bankAccount.setAmount(100);
+
+    sleep(2000L);
+  }
+});
+
+thread1.start();
+
+Thread thread2 = new Thread(() -> {
+  doInTransaction((entityManager) -> {
+    BankAccount bankAccount = entityManager.find(BankAccount.class, 10L, LockModeType.PESSIMISTIC_WRITE);
+    bankAccount.setAmount(90);
+  }
+});
+
+thread2.start();
+
+// 2nd thread will wait until locked row is updated
+```
+
+*`entityManager.lock(entity, LockModeType.NONE)` doesn't work sometimes*
