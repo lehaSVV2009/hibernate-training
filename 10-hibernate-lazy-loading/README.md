@@ -35,7 +35,7 @@ Set<Phone> phones = new HashSet<>();
 ```
 
 Here there is `n+1 select issue`
-Fetch 100 person and fetch 100 + 1 phones
+e.g. It fetches 100 person and fetch 100 + 1 phones
 
 ```
 List<Person> people = entityManager.createQuery("from Person", Person.class);
@@ -49,7 +49,7 @@ people.forEach(person -> person.getPhones().size());
 Set<Phone> phones = new HashSet<>();
 ```
 
-Here there is `n+1 select issue` as well
+Here there is `n+1 select issue` as well, so left joint can help
 
 ```
 List<Person> people = entityManager.createQuery("from Person p left join fetch p.phones", Person.class);
@@ -66,7 +66,7 @@ people.forEach(person -> person.getPhones().size());
 Set<Phone> phones = new HashSet<>();
 ```
 
-Select all child entities at once.
+Select all entities at once and then select all child entities. (2 big selects)
 
 ```
 List<Person> people = entityManager.createQuery("from Person p", Person.class);
@@ -74,7 +74,7 @@ people.forEach(person -> person.getPhones().size());
 ```
 
 
-### Fetching strategies: BACTHSIZE
+### Fetching strategies: BATCHSIZE
 
 It select n child entities with parent entities at once
 
