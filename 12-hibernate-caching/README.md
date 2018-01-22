@@ -40,6 +40,8 @@ hibernate... ??? (location to ehcache.xml)
   <diskStore path=..>
     <defaultCache
       maxEntriesLocalHeap=10000
+      ...
+    >
     </defaultCache>  
   </diskStore>
 </ehcache>
@@ -126,3 +128,7 @@ But has some difficulties and corner cases to use
 *Should I use 2nd level cache or query cache?*
 
 Only if you have special need for it. It might bring more issues.
+
+*Any Spring integration cache advice?*
+
+You could try to use Spring Cache if you use Spring instead of hibernate 2nd level cache.

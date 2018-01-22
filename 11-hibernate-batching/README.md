@@ -35,7 +35,7 @@ for (int i = 0: i < 1_000_000; ++i) {
 
 It is not really faster than [Solution 1](solution-1)
 
-* `hibernate.jdbc.batch_size`
+* `hibernate.jdbc.batch_size` tells JDBC driver to group inserts
 * `hibernate.jdbc.batch_versioned_data`
 * `hibernate.jdbc.order_inserts, order_updates`
 
