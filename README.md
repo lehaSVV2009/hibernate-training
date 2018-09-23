@@ -8,7 +8,7 @@
 * [Simple Annotations (@Id, @Column, @Type, @Basic, @Generated, @Where, @Filter, @Transient)](#simple-annotations)
 * [@Entity](#entity)
 * [@Id (types, equals+hashcode, uuid vs long)](#id)
-* [@GeneratedValue](#generatorvalue)
+* [@GeneratedValue](#generatedvalue)
 * [Custom Annotations (@MyCurrentUser)](#custom-annotations)
 * [Enums](#enums)
 * [Naming Strategies](#naming-strategies)
