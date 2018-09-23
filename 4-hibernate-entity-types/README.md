@@ -179,7 +179,7 @@ Actor actor = new Actor();
 entityManager.persists(actor);
 ```
 
-## Generators
+# Generators
 
 
 * AUTO (default) - Provider should choose a strategy

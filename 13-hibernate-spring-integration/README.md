@@ -1,6 +1,6 @@
 # Hibernate spring integration
 
-## Bootstrap
+## Quick start
 
 Gradle dependencies:
 
