@@ -1668,6 +1668,8 @@ But if you need it, use `Join Tables`.
 
 # Entity states
 
+![Hibernate Objects Lifecycle](lifecycle.jpg)
+
 **Transient <-> Persistent <-> Detached**
 
 Persistent - entity is context
