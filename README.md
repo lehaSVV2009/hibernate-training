@@ -30,7 +30,7 @@
 
 # Hello World
 
-Go to this [link](/blob/master/hibernate-only-example/src/main/kotlin/kadet/hibernate/Application.kt) to see the example of hibernate only application and READ COMMENTS THERE!
+Go to this [link](/hibernate-only-example/src/main/kotlin/kadet/hibernate/Application.kt) to see the example of hibernate only application and READ COMMENTS THERE!
 
 # Data Types
 
