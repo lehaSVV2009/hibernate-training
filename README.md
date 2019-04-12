@@ -1151,6 +1151,8 @@ Better not to use Unidirectional @OneToMany (cause of performance issues)
 
 ## Bidirectional @OneToMany
 
+https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
+
 It is important to detect who should handle mapping (`mappedBy`).
 `mappedBy` defines who should fetch dependencies - Person or Phone. It is important for performance.
 
