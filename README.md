@@ -2887,5 +2887,6 @@ What does `@PersistenceContext` mean?
 
 # References
 
-* Hibernate Documentation - [http://hibernate.org/orm/documentation](http://hibernate.org/orm/documentation)
-* Spring Data Documentation - [https://docs.spring.io/spring-data/jpa/docs/current/reference/html](https://docs.spring.io/spring-data/jpa/docs/current/reference/html)
+* Hibernate Guru Tutorial - https://vladmihalcea.com/tutorials/hibernate
+* Hibernate Documentation - http://hibernate.org/orm/documentation
+* Spring Data Documentation - https://docs.spring.io/spring-data/jpa/docs/current/reference/html
