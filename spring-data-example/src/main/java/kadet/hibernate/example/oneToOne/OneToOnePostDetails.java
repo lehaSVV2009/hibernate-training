@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Getter
 @Entity
@@ -14,9 +14,8 @@ public class OneToOnePostDetails {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    @Column(name = "creation_date", updatable = false)
+    private ZonedDateTime creationDate = ZonedDateTime.now();
 
     @Setter
     @OneToOne

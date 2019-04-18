@@ -142,9 +142,8 @@ public class OneToOnePostDetails {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    @Column(name = "creation_date", updatable = false)
+    private ZonedDateTime creationDate = ZonedDateTime.now();
 
     @Setter
     @OneToOne
@@ -158,7 +157,7 @@ In this particular case, the CascadeType.ALL and orphan removal make sense becau
 
 ## One-To-Many
 
-Common Parent – Child association consists of a one-to-many and a many-to-one relationship, where the cascade being useful for the one-to-many side only:
+Common `Parent – Child` association consists of a `one-to-many` and a `many-to-one` relationship, where the cascade being useful for the one-to-many side only:
 
 ```java
 @Entity
@@ -199,7 +198,7 @@ public class OneToManyComment {
     private String text;
 
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private OneToManyPost post;
 }
 
@@ -211,7 +210,7 @@ Like in the one-to-one example, the `CascadeType.ALL` and orphan removal are sui
 
 The `Many-To-Many` relationship is tricky because the relationship is mapped on the parent sides of the association while the child side (the join table) is hidden. If the association is bidirectional, both sides can propagate the entity state changes.
 
-`CascadeType.ALL should NOT be used` because the `CascadeType.REMOVE` might end-up deleting more than expected. Use `{CascadeType.MERGE, CascadeType.PERSIST}`
+`CascadeType.ALL should NOT be used` because the `CascadeType.REMOVE` might end-up deleting more than expected. Use `{CascadeType.MERGE, CascadeType.PERSIST}`.
 
 ```java
 @Entity
@@ -266,7 +265,7 @@ public class ManyToManyBook {
 
 # Simple Annotations
 
-TODO divide this sections to annotation specific
+TODO divide this section to annotation specific
 TODO merge @Id section with existing one
 
 See comments in code of the following annotations:
