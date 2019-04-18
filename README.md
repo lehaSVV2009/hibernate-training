@@ -1,10 +1,11 @@
 # Hibernate / Spring Data training
 
-[Hibernate](http://hibernate.org/orm/documentation) ORM enables developers to more easily write applications whose data outlives the application process. 
+[Hibernate](http://hibernate.org/orm/documentation) ORM enables developers to easily write applications whose data outlives the application process. 
 [Spring Data’s](https://docs.spring.io/spring-data/jpa/docs/current/reference/html) mission is to provide a familiar and consistent, Spring-based programming model for data access while still retaining the special traits of the underlying data store. 
 
 * [Hello World](#hello-world)
 * [Data Types](#data-types)
+* [Cascading best practices](#cascading-best-practices)
 * [Simple Annotations (@Id, @Column, @Type, @Basic, @Generated, @Where, @Filter, @Transient)](#simple-annotations)
 * [@Entity](#entity)
 * [@Id (types, equals+hashcode, uuid vs long)](#id)
@@ -93,7 +94,180 @@ class Actor {
 }
 ```
 
+# Cascading best practices
+
+See [this article](https://vladmihalcea.com/a-beginners-guide-to-jpa-and-hibernate-cascade-types/).
+
+Cascading only makes sense for `Parent – Child` associations (the Parent entity state transition being cascaded to its Child entities). 
+
+Cascading from Child to Parent is not very useful and usually, it’s a mapping code smell.
+
+## One-To-One
+
+Common One-To-One bidirectional association looks like:
+
+```java
+@Entity
+@Getter
+public class OneToOnePost {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Setter
+    private String name;
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OneToOnePostDetails details;
+
+    public void addDetails(OneToOnePostDetails details) {
+        this.details = details;
+        details.setPost(this);
+    }
+
+    public void removeDetails(OneToOnePostDetails details) {
+        if (details != null) {
+            details.setPost(null);
+        }
+        this.details = null;
+    }
+}
+
+@Getter
+@Entity
+public class OneToOnePostDetails {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(name = "creation_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate = new Date();
+
+    @Setter
+    @OneToOne
+    private OneToOnePost post;
+}
+```
+
+*The bidirectional associations should always be updated on both sides, therefore the Parent side should contain the addChild and removeChild combo. These methods ensure we always synchronize both sides of the association, to avoid object or relational data corruption issues.*
+
+In this particular case, the CascadeType.ALL and orphan removal make sense because the PostDetails life-cycle is bound to that of its Post Parent entity.
+
+## One-To-Many
+
+Common Parent – Child association consists of a one-to-many and a many-to-one relationship, where the cascade being useful for the one-to-many side only:
+
+```java
+@Entity
+@Getter
+public class OneToManyPost {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Setter
+    private String name;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OneToManyComment> comments = new ArrayList<>();
+
+    public void addComment(OneToManyComment comment) {
+        comments.add(comment);
+        comment.setPost(this);
+    }
+
+    public void removeComment(OneToManyComment comment) {
+        comment.setPost(null);
+        comments.remove(comment);
+    }
+}
+
+
+@Entity
+@Getter
+public class OneToManyComment {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Setter
+    private String text;
+
+    @Setter
+    @ManyToOne
+    private OneToManyPost post;
+}
+
+```
+
+Like in the one-to-one example, the `CascadeType.ALL` and orphan removal are suitable because the Comment life-cycle is bound to that of its `Post Parent` entity.
+
+## Many-To-Many
+
+The `Many-To-Many` relationship is tricky because the relationship is mapped on the parent sides of the association while the child side (the join table) is hidden. If the association is bidirectional, both sides can propagate the entity state changes.
+
+`CascadeType.ALL should NOT be used` because the `CascadeType.REMOVE` might end-up deleting more than expected. Use `{CascadeType.MERGE, CascadeType.PERSIST}`
+
+```java
+@Entity
+@Getter
+public class ManyToManyAuthor {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Setter
+    private String name;
+
+    @ManyToMany(mappedBy = "authors", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<ManyToManyBook> books = new ArrayList<>();
+
+    public void addBook(ManyToManyBook book) {
+        books.add(book);
+        book.getAuthors().add(this);
+    }
+
+    public void removeBook(ManyToManyBook book) {
+        books.remove(book);
+        book.getAuthors().remove(this);
+    }
+
+    public void remove() {
+        for (ManyToManyBook book : new ArrayList<>(books)) {
+            removeBook(book);
+        }
+    }
+}
+
+
+@Entity
+@Getter
+public class ManyToManyBook {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Setter
+    private String name;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<ManyToManyAuthor> authors = new ArrayList<>();
+}
+```
+
+*Practical test cases for real many-to-many associations are rare. Most of the time you need additional information stored in the link table. In this case, it is much better to use two one-to-many associations to an intermediate link class. In fact, most associations are one-to-many and many-to-one. For this reason, you should proceed cautiously when using any other association style.*
+
 # Simple Annotations
+
+TODO divide this sections to annotation specific
+TODO merge @Id section with existing one
 
 See comments in code of the following annotations:
 * `@Id`
